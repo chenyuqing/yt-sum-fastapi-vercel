@@ -4,6 +4,75 @@ A FastAPI application that transforms YouTube videos into bullet point summaries
 
 Current Version: 0.2 ([View Version History](version_history.md) | [Version History (English)](version_history_en.md))
 
+## Architecture
+
+### Code Structure
+```
+yt-sum-fastapi-vercel/
+├── main.py              # FastAPI application entry point
+├── static/             # Static files directory
+│   └── style.css       # Custom CSS styles
+├── templates/          # HTML templates
+│   └── index.html      # Main page template
+├── requirements.txt    # Python dependencies
+└── vercel.json        # Vercel deployment configuration
+```
+
+### Project Flow
+```mermaid
+graph TD
+    A[User Input] -->|YouTube URL| B[Extract Video ID]
+    B --> C[Get Transcript]
+    C -->|SearchAPI.io| D[Video Transcript]
+    D --> E[Generate Summary]
+    E -->|DeepSeek API| F[Bullet-point Summary]
+    F --> G[Store Summary]
+    G -->|JSON File| H[History Records]
+    
+    I[History Tab] -->|Page Request| J[Load History]
+    J -->|Pagination| K[Display Records]
+    K --> L[View/Delete Records]
+```
+
+### API Endpoints
+```mermaid
+graph LR
+    A[FastAPI Server] --> B[GET /]
+    A --> C[POST /summarize]
+    A --> D[GET /history]
+    A --> E[GET /api/history]
+    A --> F[DELETE /api/history/{id}]
+    A --> G[GET /api/summary/{id}]
+    
+    B -->|"返回首页"| H[index.html]
+    C -->|"生成总结"| I[Summary Result]
+    D -->|"历史页面"| J[History Page]
+    E -->|"分页数据"| K[JSON Response]
+    F -->|"删除记录"| L[Status Response]
+    G -->|"获取详情"| M[Summary Detail]
+```
+
+### Technical Flow
+```mermaid
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant FastAPI
+    participant SearchAPI
+    participant DeepSeek
+    participant Storage
+
+    User->>Frontend: Enter YouTube URL
+    Frontend->>FastAPI: POST /summarize
+    FastAPI->>SearchAPI: Get Video Transcript
+    SearchAPI-->>FastAPI: Return Transcript
+    FastAPI->>DeepSeek: Generate Summary
+    DeepSeek-->>FastAPI: Return Summary
+    FastAPI->>Storage: Save Summary
+    FastAPI-->>Frontend: Return Result
+    Frontend-->>User: Display Summary
+```
+
 ## Features
 
 - Extract YouTube video transcripts using SearchAPI.io
