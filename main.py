@@ -340,13 +340,19 @@ async def summarize(request: Request, youtube_url: str = Form(...), deepseek_api
         )
 
 @app.get("/history")
-async def history(request: Request):
+async def history(request: Request, page: int = 1, per_page: int = 10):
     global summaries
+    start = (page - 1) * per_page
+    end = start + per_page
+    current_summaries = summaries[start:end]
     return templates.TemplateResponse(
         "index.html", 
         {
             "request": request, 
-            "summaries": summaries,
+            "summaries": current_summaries,
+            "total": len(summaries),
+            "page": page,
+            "per_page": per_page,
             "active_tab": "history"
         }
     )
@@ -361,7 +367,7 @@ async def get_summary(summary_id: str):
     global summaries
     for summary in summaries:
         if summary["id"] == summary_id:
-            return summary.replace('\n', '<br>')
+            return summary
     raise HTTPException(status_code=404, detail="Summary not found")
 
 if __name__ == "__main__":

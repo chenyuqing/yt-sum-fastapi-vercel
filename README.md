@@ -2,6 +2,8 @@
 
 A FastAPI application that transforms YouTube videos into bullet point summaries using AI. This tool extracts video transcripts and generates concise summaries with the DeepSeek-R1 model.
 
+Current Version: 0.2 ([View Version History](version_history.md) | [Version History (English)](version_history_en.md))
+
 ## Features
 
 - Extract YouTube video transcripts using SearchAPI.io
